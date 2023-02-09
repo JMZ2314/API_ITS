@@ -13,6 +13,8 @@ class LearningStyleSerializer(serializers.ModelSerializer):
     class Meta:
         model= models.LearningStyle
         fields= ['id','name']
+    
+
 
         
 class UserSerializer(serializers.ModelSerializer):
