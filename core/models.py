@@ -68,6 +68,26 @@ class Role(models.Model):
     created_date = models.DateTimeField(auto_now=True)
     updated_date = models.DateTimeField(auto_now=True)
 
+
+class LevelTest(models.Model):
+    
+    class Meta:
+        db_table = 'levels_test'
+    
+    name = models.CharField(max_length= 20)
+    is_enabled = models.BooleanField(default=True)
+    created_date = models.DateTimeField(auto_now=True)
+    updated_date = models.DateTimeField(auto_now=True)
+
+class TypeTest(models.Model):
+    class Meta:
+        db_table = 'types_test'
+    
+    name = models.CharField(max_length= 20)
+    is_enabled = models.BooleanField(default=True)
+    created_date = models.DateTimeField(auto_now=True)
+    updated_date = models.DateTimeField(auto_now=True)
+
 class User(AbstractBaseUser,PermissionsMixin):
 
     class Meta:
@@ -92,3 +112,92 @@ class User(AbstractBaseUser,PermissionsMixin):
     def __str__(self):
 
         return self.email
+
+class Course(models.Model):
+    class Meta:
+        db_table = 'courses'
+
+    title = models.CharField(max_length=30)
+    description = models.TextField()
+    created_date = models.DateTimeField(auto_now=True)
+    updated_date = models.DateTimeField(auto_now=True)
+    is_enabled = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
+    users = models.ManyToManyField(User, through='user_course')
+    previous = models.ForeignKey('self', on_delete= models.DO_NOTHING)
+
+class User_Course(models.Model):
+    class Meta:
+        db_table = 'user_course'
+    user = models.ForeignKey(User, on_delete= models.CASCADE)
+    course = models.ForeignKey(Course, on_delete= models.CASCADE)
+    approved = models.BooleanField(default= False)
+
+class Test(models.Model):
+
+    class Meta:
+        db_table = 'test'
+
+    content = models.TextField()
+    created_date = models.DateTimeField(auto_now=True)
+    updated_date = models.DateTimeField(auto_now=True)
+    is_enabled = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
+    level  = models.ForeignKey( LevelTest, on_delete= models.CASCADE)
+    type = models.ForeignKey( TypeTest, on_delete= models.CASCADE)
+
+class Answer(models.Model):
+
+    class Meta:
+        db_table = 'answer'
+    
+    description = models.CharField(max_length= 30)
+    is_correct = models.BooleanField(default= False)
+    created_date = models.DateTimeField(auto_now=True)
+    updated_date = models.DateTimeField(auto_now=True)
+    is_enabled = models.BooleanField(default=True)
+    test = models.ForeignKey(Test, on_delete= models.CASCADE)
+    users = models.ManyToManyField(User, through='user_answer')
+    
+class User_Answer(models.Model):
+    class Meta:
+        db_table = 'user_answer'
+    
+    user = models.ForeignKey(User, on_delete= models.CASCADE)
+    answer = models.ForeignKey(Answer, on_delete= models.CASCADE)
+    date_answer = models.DateField(auto_now= True)  
+
+
+class Section(models.Model):
+
+    class Meta:
+        db_table = 'section' 
+    
+    title = models.CharField(max_length=30)
+    course = models.ForeignKey(Course, on_delete= models.CASCADE)
+    is_enabled = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
+    previous = models.ForeignKey('self', on_delete= models.DO_NOTHING)
+    created_date = models.DateTimeField(auto_now=True)
+    updated_date = models.DateTimeField(auto_now=True)
+    test = models.OneToOneField(Test, on_delete=models.CASCADE)
+
+class Lesson(models.Model):
+
+    class Meta:
+        db_table = 'lesson'
+    
+    title = models.CharField(max_length=30)
+    content = models.TextField()
+    section = models.ForeignKey(Section, on_delete= models.CASCADE)
+    previous = models.ForeignKey('self', on_delete= models.DO_NOTHING)
+    created_date = models.DateTimeField(auto_now=True)
+    updated_date = models.DateTimeField(auto_now=True)
+    is_enabled = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
+    # FALTA EL CAMPO RECURSO
+
+
+    
+
+      
