@@ -28,18 +28,22 @@ class LevelTestSerializer(serializers.ModelSerializer):
 
 class CourseSerializer(serializers.ModelSerializer):
 
-    previous = 'self'
+    # previous = 'self'
     class Meta:
         model= models.Course
         fields = ['id','title','description','is_enabled','previous']
-        depth = 1
 class SectionSerializer(serializers.ModelSerializer):
-    previous = 'self'
-    course = CourseSerializer()
     class Meta:
         model= models.Section
-        fields = ['id','title','is_enabled','previous','previous','course','test', 'is_active']
+        fields = ['id','title','is_enabled','previous','course','test', 'is_active']
+
+class LessonSerializer(serializers.ModelSerializer):
+    section = SectionSerializer
+    class Meta:
+        model = models.Lesson
+        fields = ['id','title','content','section','is_enabled','is_active']
         depth = 1
+
 class TestSerializer(serializers.ModelSerializer):
 
     level = LevelTestSerializer()
@@ -56,3 +60,7 @@ class UserSerializer(serializers.ModelSerializer):
         model= models.User
         fields = ['id','first_name','last_name','email','role','learning_style','is_superuser','is_enabled']
         depth = 1
+class AnswerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Answer
+        fields = ['id','description','is_correct','is_enabled','test'] 

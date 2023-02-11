@@ -14,7 +14,6 @@ class UserView(views.APIView,pagination.PageNumberPagination):
     
         try:
             users = User.objects.all()
-            print(users)
             paginated_data = self.paginate_queryset(users,request)
             serializer = self.serializer_class( paginated_data, many = True)
 

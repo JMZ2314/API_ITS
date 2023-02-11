@@ -2,11 +2,12 @@ from rest_framework import views,pagination,status
 from rest_framework.response import Response
 from core.serializers import LearningStyleSerializer
 from core.models import LearningStyle
-
+from rest_framework.permissions import IsAuthenticated
 class LearningStyleView(views.APIView,pagination.PageNumberPagination):
 
     serializer_class = LearningStyleSerializer
-    
+    permission_classes = [IsAuthenticated,] 
+
     def get(self,request,format = None):
         try:
             learning_styles = LearningStyle.objects.all()

@@ -124,7 +124,7 @@ class Course(models.Model):
     is_enabled = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
     users = models.ManyToManyField(User, through='user_course')
-    previous = models.ForeignKey('self', on_delete= models.DO_NOTHING)
+    previous = models.ForeignKey('self', on_delete= models.DO_NOTHING, null= True)
 
 class User_Course(models.Model):
     class Meta:
@@ -177,7 +177,7 @@ class Section(models.Model):
     course = models.ForeignKey(Course, on_delete= models.CASCADE)
     is_enabled = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
-    previous = models.ForeignKey('self', on_delete= models.DO_NOTHING)
+    previous = models.ForeignKey('self', on_delete= models.DO_NOTHING, null= True)
     created_date = models.DateTimeField(auto_now=True)
     updated_date = models.DateTimeField(auto_now=True)
     test = models.OneToOneField(Test, on_delete=models.CASCADE)
@@ -190,12 +190,13 @@ class Lesson(models.Model):
     title = models.CharField(max_length=30)
     content = models.TextField()
     section = models.ForeignKey(Section, on_delete= models.CASCADE)
-    previous = models.ForeignKey('self', on_delete= models.DO_NOTHING)
+    previous = models.ForeignKey('self', on_delete= models.DO_NOTHING, null=True)
     created_date = models.DateTimeField(auto_now=True)
     updated_date = models.DateTimeField(auto_now=True)
     is_enabled = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
     # FALTA EL CAMPO RECURSO
+
 
 
     
