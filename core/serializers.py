@@ -32,18 +32,18 @@ class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model= models.Course
         fields = ['id','title','description','is_enabled','previous']
+
+class LessonSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Lesson
+        fields = ['id','title','content','is_enabled','is_active']
+    
+
 class SectionSerializer(serializers.ModelSerializer):
     class Meta:
         model= models.Section
-        fields = ['id','title','is_enabled','previous','course','test', 'is_active']
-
-class LessonSerializer(serializers.ModelSerializer):
-    section = SectionSerializer
-    class Meta:
-        model = models.Lesson
-        fields = ['id','title','content','section','is_enabled','is_active']
-        depth = 1
-
+        fields = ['id','title','is_enabled','previous','course','test','is_active']
+     
 class TestSerializer(serializers.ModelSerializer):
 
     level = LevelTestSerializer()
@@ -63,4 +63,11 @@ class UserSerializer(serializers.ModelSerializer):
 class AnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Answer
-        fields = ['id','description','is_correct','is_enabled','test'] 
+        fields = ['id','description','is_correct','is_enabled','test']
+
+class SimpleEntitySerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    title = serializers.CharField()
+
+
+
