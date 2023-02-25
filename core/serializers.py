@@ -28,10 +28,11 @@ class LevelTestSerializer(serializers.ModelSerializer):
 
 class CourseSerializer(serializers.ModelSerializer):
 
+    image = serializers.ImageField(required = False)
     # previous = 'self'
     class Meta:
         model= models.Course
-        fields = ['id','title','description','is_enabled','previous']
+        fields = ['id','title','description','is_enabled','previous','image','reference']
 
 class LessonSerializer(serializers.ModelSerializer):
     class Meta:

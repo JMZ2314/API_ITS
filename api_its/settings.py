@@ -1,6 +1,7 @@
 from datetime import timedelta
 from pathlib import Path
 import environ
+import os
 
 env = environ.Env(
     
@@ -144,6 +145,10 @@ USE_I18N = True
 
 USE_TZ = True
 
+# CONFIGURACIÓN PARA LA SUBIDA DE ARCHIVOS
+
+MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'upload')
+MEDIA_URL = '/media/'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/

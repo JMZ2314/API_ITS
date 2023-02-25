@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractBaseUser,BaseUserManager,PermissionsMixin
 from django.db import models
+import uuid
 
 
 # MANAGERS DE LOS MODELOS
@@ -113,10 +114,15 @@ class User(AbstractBaseUser,PermissionsMixin):
 
         return self.email
 
+
+
+def course_image_path(instance,filename):
+    return 'images/courses/{0}/{1}'.format(instance.reference,filename)
 class Course(models.Model):
     class Meta:
         db_table = 'courses'
 
+    reference = models.UUIDField(default= uuid.uuid4, editable=False)
     title = models.CharField(max_length=30)
     description = models.TextField()
     created_date = models.DateTimeField(auto_now=True)
@@ -125,6 +131,7 @@ class Course(models.Model):
     is_active = models.BooleanField(default=True)
     users = models.ManyToManyField(User, through='user_course')
     previous = models.ForeignKey('self', on_delete= models.DO_NOTHING, null= True)
+    image = models.ImageField(upload_to= course_image_path,blank=True,null=True)
 
 class User_Course(models.Model):
     class Meta:
