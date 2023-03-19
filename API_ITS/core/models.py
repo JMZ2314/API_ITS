@@ -182,6 +182,7 @@ class Test(models.Model):
     class Meta:
         db_table = 'test'
 
+    reference = models.UUIDField(default= uuid.uuid4, editable=False)
     content = models.TextField()
     created_date = models.DateTimeField(auto_now=True)
     updated_date = models.DateTimeField(auto_now=True)
@@ -251,32 +252,24 @@ class Section(models.Model):
             return []
 
 
-def textures_file_path(instance,filename):
-    return 'textures/{0}/{1}'.format(instance.reference,filename)
-class Texture(models.Model):
-    class Meta:
-        db_table = 'texture'
-    reference = models.UUIDField(default= uuid.uuid4, editable=False)
-    texture = models.FileField(upload_to=textures_file_path,blank=True,null=True)
 
 
 
+def resource_files_path(instance,filename):
+    return 'resource/{0}/{1}'.format(instance.reference,filename)     
 
-def resource_obj_path(instance,filename):
-    return 'resource/obj/{0}/{1}'.format(instance.reference,filename)
-def resource_mtl_path(instance,filename):
-    return 'resource/mtl/{0}/{1}'.format(instance.reference,filename)      
 class Resource(models.Model):
     class Meta:
         db_table = 'resource'
     reference = models.UUIDField(default= uuid.uuid4, editable=False)
-    obj = models.FileField(upload_to=resource_obj_path,blank=True,null=True)
-    mtl = models.FileField(upload_to=resource_mtl_path,blank=True,null=True)
-
+    model_3d = models.FileField(upload_to=resource_files_path,blank=True,null=True)
+    text =  models.CharField(max_length=250,blank=True,null=True)
+   
 
 
 def lessons_image_path(instance,filename):
     return 'images/lessons/{0}/{1}'.format(instance.reference,filename)
+
 class Lesson(models.Model):
 
     class Meta:
@@ -286,13 +279,13 @@ class Lesson(models.Model):
     title = models.CharField(max_length=50)
     content = models.TextField()
     section = models.ForeignKey(Section, on_delete= models.CASCADE)
-    previous = models.ForeignKey('self', on_delete= models.DO_NOTHING, null=True)
+    previous = models.ForeignKey('self', on_delete= models.DO_NOTHING, blank=True ,null=True)
     image = models.ImageField(upload_to= lessons_image_path,blank=True,null=True)
     created_date = models.DateTimeField(auto_now=True)
     updated_date = models.DateTimeField(auto_now=True)
     is_enabled = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
-    resource = models.ForeignKey(Resource,on_delete=models.CASCADE,blank=True,null=True)
+    resource = models.ForeignKey(Resource,on_delete=models.SET_NULL,blank=True,null=True)
     objects = models.Manager()
 
     @classmethod

@@ -10,6 +10,7 @@ from levels_test.views import LevelTestView
 from learning_style.views import LearningStyleView
 from courses.views import CourseView
 from Auth.views import AuthView,LogOutView
+from resource.views import ResourceView
 from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
@@ -23,6 +24,7 @@ urlpatterns = [
     path('types_test', TypeTestView.as_view()),
     path('levels_test', LevelTestView.as_view()),
     path('learning_styles', LearningStyleView.as_view()),
+    path('resources', ResourceView.as_view()),
     path('login', AuthView.as_view()),
     path('logout', LogOutView.as_view()),
     path('signin', RegisterView.as_view()),

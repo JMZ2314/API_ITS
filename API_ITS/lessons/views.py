@@ -43,8 +43,8 @@ class LessonView(APIView,PageNumberPagination):
             serializer = self.serializer_class(data=request.data)
 
             if(serializer.is_valid()):
-                course_created =   self.serializer_class(serializer.save()).data
-                return Response({'success': True, 'message': "La lección fue creada exitosamente", 'data': course_created , 'status' : status.HTTP_200_OK }, status= status.HTTP_200_OK)
+                lesson_created =   self.serializer_class(serializer.save()).data
+                return Response({'success': True, 'message': "La lección fue creada exitosamente", 'data': lesson_created , 'status' : status.HTTP_200_OK }, status= status.HTTP_200_OK)
             else:
                 return Response({'success': False, 'messages':  serializer.errors , 'status' : status.HTTP_400_BAD_REQUEST }, status= status.HTTP_400_BAD_REQUEST)
         except Exception as e:

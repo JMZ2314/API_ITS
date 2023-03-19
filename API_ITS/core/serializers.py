@@ -47,15 +47,35 @@ class SectionSerializer(serializers.ModelSerializer):
         model= models.Section
         fields = ['id','title','is_enabled','previous','course','test','is_active','test_id','course_id']
         depth = 1
-     
+
+class LessonSerializerLevel1(serializers.ModelSerializer):
+    # CAMPOS DE SOLO ESCRITURA
+    section_id = serializers.IntegerField(write_only = True)
+    previous_id = serializers.IntegerField(write_only = True,allow_null= True)
+    resource_id = serializers.IntegerField(write_only = True,required = False,allow_null = True)
+    section = SectionSerializer()
+    
+    class Meta:
+        model = models.Lesson
+        fields = ['id','title','content','is_enabled','is_active','image','previous','section','section_id','previous_id','resource_id','resource']
 class LessonSerializer(serializers.ModelSerializer):
     # CAMPOS DE SOLO ESCRITURA
     section_id = serializers.IntegerField(write_only = True)
-    previous_id = serializers.IntegerField(write_only = True)
+    previous_id = serializers.IntegerField(write_only = True,allow_null= True)
+    resource_id = serializers.IntegerField(write_only = True,required = False,allow_null = True)
+    section = SectionSerializer()
+    previous = LessonSerializerLevel1()
+    
     class Meta:
         model = models.Lesson
-        fields = ['id','title','content','is_enabled','is_active','image','previous','section','section_id','previous_id']
-        depth = 1
+        fields = ['id','title','content','is_enabled','is_active','image','previous','section','section_id','previous_id','resource_id','resource']
+
+class ResourceSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Resource
+        fields = ['id','model_3d','text']
+
 class TestSerializer(serializers.ModelSerializer):
 
     # CAMPOS DE SOLO ESCRITURA
