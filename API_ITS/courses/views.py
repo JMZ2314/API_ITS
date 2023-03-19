@@ -12,17 +12,19 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 class CourseView(APIView,PageNumberPagination):
 
     serializer_class = CourseSerializer
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated,]
+    # authentication_classes = [JWTAuthentication]
+    # permission_classes = [IsAuthenticated,]
     parser_classes = [MultiPartParser,FormParser,JSONParser]
 
     def get (self,request):
         try:
-            courses = Course.objects.all()
-            paginated_data = self.paginate_queryset(courses,request)
+            
+            # OBTENER LOS CURSOS ORDENADOS
+            courses_ordered = Course.get_ordered_courses()
+            paginated_data = self.paginate_queryset(courses_ordered,request)
             serializer = self.serializer_class( paginated_data, many = True)
 
-            return Response({'success': True , 'count': courses.count()  , 'data': serializer.data, 'next':self.get_next_link() , 'previous':self.get_previous_link() , 'status:' : status.HTTP_200_OK }, status= status.HTTP_200_OK  )
+            return Response({'success': True , 'count': len(courses_ordered)  , 'data': serializer.data, 'next':self.get_next_link() , 'previous':self.get_previous_link() , 'status:' : status.HTTP_200_OK }, status= status.HTTP_200_OK  )
         except Exception as e:
             return Response({'success': False, 'message': f"{e}", 'status' : status.HTTP_400_BAD_REQUEST } , status= status.HTTP_400_BAD_REQUEST)
     

@@ -34,28 +34,36 @@ class CourseSerializer(serializers.ModelSerializer):
     # previous = 'self'
     class Meta:
         model= models.Course
-        fields = ['id','title','description','is_enabled','previous','image','reference']
+        fields = ['id','title','description','is_enabled','previous','image','reference','is_active']
 
     
 
 class SectionSerializer(serializers.ModelSerializer):
+
+    # CAMPOS DE SOLO ESCRITURA
+    test_id = serializers.IntegerField(write_only = True)
+    course_id = serializers.IntegerField(write_only = True)
     class Meta:
         model= models.Section
-        fields = ['id','title','is_enabled','previous','course','test','is_active']
+        fields = ['id','title','is_enabled','previous','course','test','is_active','test_id','course_id']
+        depth = 1
      
 class LessonSerializer(serializers.ModelSerializer):
-    section = SectionSerializer()
+    # CAMPOS DE SOLO ESCRITURA
+    section_id = serializers.IntegerField(write_only = True)
+    previous_id = serializers.IntegerField(write_only = True)
     class Meta:
         model = models.Lesson
-        fields = ['id','title','content','is_enabled','is_active','image','previous','section']
+        fields = ['id','title','content','is_enabled','is_active','image','previous','section','section_id','previous_id']
         depth = 1
 class TestSerializer(serializers.ModelSerializer):
 
-    level = LevelTestSerializer()
-    type = TypeTestSerializer()
+    # CAMPOS DE SOLO ESCRITURA
+    level_id = serializers.IntegerField(write_only = True)
+    type_id = serializers.IntegerField(write_only = True)
     class Meta:
         model= models.Test
-        fields = ['id','content','level','type','is_active','is_enabled']
+        fields = ['id','content','level','type','is_active','is_enabled','image','level_id','type_id']
         depth = 1
         
 class UserSerializer(serializers.ModelSerializer):
@@ -122,9 +130,13 @@ class UserSerializer(serializers.ModelSerializer):
         
 
 class AnswerSerializer(serializers.ModelSerializer):
+
+    # CAMPOS DE SOLO ESCRITURA
+    test_id = serializers.IntegerField(write_only = True)
     class Meta:
         model = models.Answer
-        fields = ['id','description','is_correct','is_enabled','test']
+        fields = ['id','description','is_correct','is_enabled','test','test_id']
+        depth = 1
 
 class SimpleEntitySerializer(serializers.Serializer):
     id = serializers.IntegerField()

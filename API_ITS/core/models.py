@@ -141,8 +141,31 @@ class Course(models.Model):
     is_enabled = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
     users = models.ManyToManyField(User, through='user_course')
-    previous = models.ForeignKey('self', on_delete= models.DO_NOTHING, null= True)
+    previous = models.ForeignKey('self', on_delete= models.DO_NOTHING, blank=True ,null= True)
     image = models.ImageField(upload_to= course_image_path,blank=True,null=True)
+
+    @classmethod
+    def get_ordered_courses(cls):
+
+        try:
+            # OBTENER TODOS LOS CURSOS
+            courses = cls.objects.all()
+
+            # ORDENAR LOS CURSOS DE FORMA SUCESIVA
+            courses_ordered = []
+            # obtener el primer curso
+            first_course = courses.get(previous = None)
+            courses_ordered.append(first_course)
+            # ordenar los demás cursos
+            for item in courses_ordered:
+                next_course = courses.get( previous = item.id )
+                courses_ordered.append(next_course)
+                if(len(courses_ordered) == len(courses)):
+
+                    break
+            return courses_ordered
+        except Exception as e:
+            return []
 
 class User_Course(models.Model):
     class Meta:
@@ -151,6 +174,9 @@ class User_Course(models.Model):
     course = models.ForeignKey(Course, on_delete= models.CASCADE)
     approved = models.BooleanField(default= False)
 
+
+def test_image_path(instance,filename):
+    return 'images/test/{0}/{1}'.format(instance.reference,filename)
 class Test(models.Model):
 
     class Meta:
@@ -163,6 +189,7 @@ class Test(models.Model):
     is_active = models.BooleanField(default=True)
     level  = models.ForeignKey( LevelTest, on_delete= models.CASCADE)
     type = models.ForeignKey( TypeTest, on_delete= models.CASCADE)
+    image = models.ImageField( upload_to=test_image_path, blank=True, null=True )
 
 class Answer(models.Model):
 
@@ -191,7 +218,7 @@ class Section(models.Model):
     class Meta:
         db_table = 'section' 
     
-    title = models.CharField(max_length=30)
+    title = models.CharField(max_length=50)
     course = models.ForeignKey(Course, on_delete= models.CASCADE)
     is_enabled = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
@@ -199,6 +226,29 @@ class Section(models.Model):
     created_date = models.DateTimeField(auto_now=True)
     updated_date = models.DateTimeField(auto_now=True)
     test = models.OneToOneField(Test, on_delete=models.CASCADE)
+
+    @classmethod
+    def get_ordered_sections(cls):
+
+        try:
+            # OBTENER TODAS LAS SECCIONES DEL CURSO SELECCIONADO
+            sections = cls.objects.all()
+
+            # ORDENAR LAS SECCIONES DE FORMA SUCESIVA
+            sections_ordered = []
+            # obtener la primera sección del curso y agegarla a una nueva lista
+            first_section = sections.get(previous = None)
+            sections_ordered.append(first_section)
+            # ordenar las demás secciones
+            for item in sections_ordered:
+                next_course = sections.get( previous = item.id )
+                sections_ordered.append(next_course)
+                if(len(sections_ordered) == len(sections)):
+
+                    break
+            return sections_ordered
+        except Exception as e:
+            return []
 
 
 def textures_file_path(instance,filename):
@@ -233,7 +283,7 @@ class Lesson(models.Model):
         db_table = 'lesson'
     
     reference = models.UUIDField(default= uuid.uuid4, editable=False)
-    title = models.CharField(max_length=30)
+    title = models.CharField(max_length=50)
     content = models.TextField()
     section = models.ForeignKey(Section, on_delete= models.CASCADE)
     previous = models.ForeignKey('self', on_delete= models.DO_NOTHING, null=True)

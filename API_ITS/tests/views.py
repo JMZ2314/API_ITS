@@ -6,10 +6,12 @@ from core.serializers import TestSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.parsers import JSONParser,MultiPartParser,FormParser
 
 class TestView(APIView,PageNumberPagination):
 
     serializer_class = TestSerializer
+    parser_classes = [MultiPartParser,FormParser,JSONParser]
     # authentication_classes = [JWTAuthentication,]
     # permission_classes = [IsAuthenticated,]  
 
@@ -32,3 +34,19 @@ class TestView(APIView,PageNumberPagination):
             return Response({'success': True , 'count': 0 if filter_by_id else tests.count() , 'data': serializer.data[0]  if filter_by_id else serializer.data , 'next':self.get_next_link() , 'previous':self.get_previous_link() , 'status:' : status.HTTP_200_OK }, status= status.HTTP_200_OK  )
         except Exception as e:
             return Response({'success': False, 'message': f"{e}", 'status' : status.HTTP_400_BAD_REQUEST } , status= status.HTTP_400_BAD_REQUEST)
+        
+
+    def post(self, request):
+        
+        try:
+
+            serializer = self.serializer_class(data=request.data)
+
+            if(serializer.is_valid()):
+                test_created =   self.serializer_class(serializer.save()).data
+                return Response({'success': True, 'message': "La prueba fue creada exitosamente", 'data': test_created , 'status' : status.HTTP_200_OK }, status= status.HTTP_200_OK)
+            else:
+                return Response({'success': False, 'messages':  serializer.errors , 'status' : status.HTTP_400_BAD_REQUEST }, status= status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            return Response({'success': False, 'message': f"Ocurrió un error la prueba: {e}", 'status' : status.HTTP_400_BAD_REQUEST }, status= status.HTTP_400_BAD_REQUEST)
