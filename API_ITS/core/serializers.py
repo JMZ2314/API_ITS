@@ -36,13 +36,22 @@ class CourseSerializer(serializers.ModelSerializer):
         model= models.Course
         fields = ['id','title','description','is_enabled','previous','image','reference','is_active']
 
-    
+class TestSerializer(serializers.ModelSerializer):
+
+    # CAMPOS DE SOLO ESCRITURA
+    level_id = serializers.IntegerField(write_only = True)
+    type_id = serializers.IntegerField(write_only = True)
+    class Meta:
+        model= models.Test
+        fields = ['id','content','level','type','is_active','is_enabled','image','level_id','type_id','image']
+        depth = 1
 
 class SectionSerializer(serializers.ModelSerializer):
 
     # CAMPOS DE SOLO ESCRITURA
     test_id = serializers.IntegerField(write_only = True)
     course_id = serializers.IntegerField(write_only = True)
+    test = TestSerializer()
     class Meta:
         model= models.Section
         fields = ['id','title','is_enabled','previous','course','test','is_active','test_id','course_id']
@@ -53,7 +62,7 @@ class LessonSerializerLevel1(serializers.ModelSerializer):
     section_id = serializers.IntegerField(write_only = True)
     previous_id = serializers.IntegerField(write_only = True,allow_null= True)
     resource_id = serializers.IntegerField(write_only = True,required = False,allow_null = True)
-    section = SectionSerializer()
+    section = SectionSerializer(read_only = True)
     
     class Meta:
         model = models.Lesson
@@ -63,8 +72,8 @@ class LessonSerializer(serializers.ModelSerializer):
     section_id = serializers.IntegerField(write_only = True)
     previous_id = serializers.IntegerField(write_only = True,allow_null= True)
     resource_id = serializers.IntegerField(write_only = True,required = False,allow_null = True)
-    section = SectionSerializer()
-    previous = LessonSerializerLevel1()
+    section = SectionSerializer(read_only = True)
+    previous = LessonSerializerLevel1(read_only = True)
     
     class Meta:
         model = models.Lesson
@@ -76,15 +85,7 @@ class ResourceSerializer(serializers.ModelSerializer):
         model = models.Resource
         fields = ['id','model_3d','text']
 
-class TestSerializer(serializers.ModelSerializer):
 
-    # CAMPOS DE SOLO ESCRITURA
-    level_id = serializers.IntegerField(write_only = True)
-    type_id = serializers.IntegerField(write_only = True)
-    class Meta:
-        model= models.Test
-        fields = ['id','content','level','type','is_active','is_enabled','image','level_id','type_id']
-        depth = 1
         
 class UserSerializer(serializers.ModelSerializer):
     
@@ -162,5 +163,14 @@ class SimpleEntitySerializer(serializers.Serializer):
     id = serializers.IntegerField()
     title = serializers.CharField()
 
+
+class AnswerUserSerializer(serializers.ModelSerializer):
+
+    user_id = serializers.IntegerField(write_only=True)
+    answer_id = serializers.IntegerField(write_only=True)
+    class Meta:
+        model = models.User_Answer
+        fields = ['id','user','date_answer','answer','user_id','answer_id']
+        depth = 1
 
 

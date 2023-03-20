@@ -8,6 +8,7 @@ from types_test.views import TypeTestView
 from answers.views import AnswerView
 from levels_test.views import LevelTestView
 from learning_style.views import LearningStyleView
+from answer_user.views import AnswerUserView
 from courses.views import CourseView
 from Auth.views import AuthView,LogOutView
 from resource.views import ResourceView
@@ -24,9 +25,10 @@ urlpatterns = [
     path('types_test', TypeTestView.as_view()),
     path('levels_test', LevelTestView.as_view()),
     path('learning_styles', LearningStyleView.as_view()),
+    path('answer_user', AnswerUserView.as_view()),
     path('resources', ResourceView.as_view()),
     path('login', AuthView.as_view()),
     path('logout', LogOutView.as_view()),
     path('signin', RegisterView.as_view()),
-    path('refresh', TokenRefreshView.as_view())
+    path('refresh', TokenRefreshView.as_view()),
 ]

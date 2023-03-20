@@ -45,6 +45,7 @@ class SectionView(APIView,PageNumberPagination):
                     'is_enabled': section_dict.get('is_enabled'),
                     'is_active': section_dict.get('is_active'),
                     'course': section_dict.get('course'),
+                    'test':section_dict.get('test'),
                     # OBTENER LAS LECCIONES QUE PERTENECEN A ESA SECCIÓN 
                     'lessons':   SimpleEntitySerializer(lessons_by_section, many = True).data
                 })

@@ -211,7 +211,7 @@ class User_Answer(models.Model):
     
     user = models.ForeignKey(User, on_delete= models.CASCADE)
     answer = models.ForeignKey(Answer, on_delete= models.CASCADE)
-    date_answer = models.DateField(auto_now= True)  
+    date_answer = models.DateTimeField(auto_now= True)  
 
 
 class Section(models.Model):
@@ -226,7 +226,7 @@ class Section(models.Model):
     previous = models.ForeignKey('self', on_delete= models.DO_NOTHING, null= True)
     created_date = models.DateTimeField(auto_now=True)
     updated_date = models.DateTimeField(auto_now=True)
-    test = models.OneToOneField(Test, on_delete=models.CASCADE)
+    test = models.ForeignKey(Test, on_delete=models.CASCADE)
 
     @classmethod
     def get_ordered_sections(cls):
