@@ -1,7 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from core.models import Section,Lesson
+from sections.models import Section
+from lessons.models import Lesson
 from core.serializers import SectionSerializer,LessonSerializer,SimpleEntitySerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
@@ -40,12 +41,7 @@ class SectionView(APIView,PageNumberPagination):
                 lessons_by_section  = Lesson.get_ordered_lessons(section=section_dict.get('id'))
                 
                 sections_lessons.append({
-                    'id' : section_dict.get('id'),
-                    'title' : section_dict.get('title'),
-                    'is_enabled': section_dict.get('is_enabled'),
-                    'is_active': section_dict.get('is_active'),
-                    'course': section_dict.get('course'),
-                    'test':section_dict.get('test'),
+                    **section_dict,
                     # OBTENER LAS LECCIONES QUE PERTENECEN A ESA SECCIÓN 
                     'lessons':   SimpleEntitySerializer(lessons_by_section, many = True).data
                 })

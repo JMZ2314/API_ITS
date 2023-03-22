@@ -30,11 +30,21 @@ ALLOWED_HOSTS = []
 
 LOCAL_APPS = [
     'core',
-    # 'users',
-    # 'roles',
-    # 'operations',
-    # 'learning_style',
-    # 'modules'
+    'users',
+    'answer_user',
+    'answers',
+    'Auth',
+    'courses',
+    'learning_style',
+    'lessons',
+    'levels_test',
+    'modules',
+    'operations',
+    'resource',
+    'roles',
+    'sections',
+    'tests',
+    'types_test'
 ]
 
 
@@ -158,6 +168,6 @@ STATIC_URL = 'static/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
-AUTH_USER_MODEL = 'core.User'
+AUTH_USER_MODEL = 'users.User'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

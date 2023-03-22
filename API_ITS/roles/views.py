@@ -1,7 +1,7 @@
 from rest_framework import views,pagination,status
 from rest_framework.response import Response
 from core.serializers import RoleSerializer
-from core.models import Role
+from roles.models import Role
 from rest_framework.permissions import IsAuthenticated
 
 class RoleView(views.APIView,pagination.PageNumberPagination):

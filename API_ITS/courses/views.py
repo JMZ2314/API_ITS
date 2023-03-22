@@ -1,7 +1,10 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from core.models import Course
+from courses.models import Course
+from answers.models import Answer,User_Answer
+from users.models import User
+from sections.models import Section
 from core.serializers import CourseSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
@@ -23,10 +26,48 @@ class CourseView(APIView,PageNumberPagination):
             courses_ordered = Course.get_ordered_courses()
             paginated_data = self.paginate_queryset(courses_ordered,request)
             serializer = self.serializer_class( paginated_data, many = True)
+            courses_with_progress = []
 
-            return Response({'success': True , 'count': len(courses_ordered)  , 'data': serializer.data, 'next':self.get_next_link() , 'previous':self.get_previous_link() , 'status:' : status.HTTP_200_OK }, status= status.HTTP_200_OK  )
+            # OBTENER EL ID DEL USUARIO QUE SE LOGUEO EN LA APP
+            user_id = request.query_params['user_id']
+            # OBTENER LAS RESPUESTAS CORRECTAS
+            answers_correct = Answer.objects.filter(is_correct = True)
+            # OBTENER LAS RESPUESTAS DEL USUARIO
+            user_answers = User_Answer.objects.filter(user_id= user_id) 
+            
+
+            for course in serializer.data:
+                
+                # CONVERTIR EL OBJETO CURSO A DICCIONARIO PARA PODER MODIFICARLO
+                course_dict = dict(course)
+
+                # OBTENER LAS SECCIONES DEL CURSO
+                sections_by_course = Section.objects.filter(course_id = course_dict.get('id'))
+
+                # OBTENER LAS RESPUESTAS CORRECTAS POR USUARIO EN CADA UNA DE LAS SECCIONES DEL CURSO
+                answer_correcy_by_user = [answer for answer in answers_correct if any( section.test_id == answer.test_id for section in sections_by_course) and any(answer_user.answer_id == answer.id for answer_user in user_answers) ]
+
+                courses_with_progress.append({
+                    #  'id':  course_dict.get('id') ,
+                    # 'title': course_dict.get('title'),
+                    # 'description': course_dict.get('description'),
+                    # 'is_enabled': course_dict.get('is_enabled'),
+                    # 'previous': course_dict.get('previous'),
+                    # 'image': course_dict.get('image'),
+                    # 'reference': 'bb7bec80-246f-4731-b4ae-dcb1cf1f490e',
+                    # 'is_active': true
+                    **course_dict,
+                    'progress_user':{
+                        'percentage': round( len( (100*answer_correcy_by_user) ) /  len(sections_by_course) ) ,
+                        'sections_completed' : len(answer_correcy_by_user),
+                        'sections_missing': len(sections_by_course) - len(answer_correcy_by_user)
+                    }
+                })
+
+
+            return Response({'success': True , 'count': len(courses_ordered)  , 'data': courses_with_progress, 'next':self.get_next_link() , 'previous':self.get_previous_link() , 'status:' : status.HTTP_200_OK }, status= status.HTTP_200_OK  )
         except Exception as e:
-            return Response({'success': False, 'message': f"{e}", 'status' : status.HTTP_400_BAD_REQUEST } , status= status.HTTP_400_BAD_REQUEST)
+            return Response({'success': False, 'message': f'{e}', 'status' : status.HTTP_400_BAD_REQUEST } , status= status.HTTP_400_BAD_REQUEST)
     
     def post(self, request):
         
@@ -36,9 +77,9 @@ class CourseView(APIView,PageNumberPagination):
 
             if(serializer.is_valid()):
                 course_created =   self.serializer_class(serializer.save()).data
-                return Response({'success': True, 'message': "El curso fue creado exitosamente", 'data': course_created , 'status' : status.HTTP_200_OK }, status= status.HTTP_200_OK)
+                return Response({'success': True, 'message': 'El curso fue creado exitosamente', 'data': course_created , 'status' : status.HTTP_200_OK }, status= status.HTTP_200_OK)
             else:
                 return Response({'success': False, 'messages':  serializer.errors , 'status' : status.HTTP_400_BAD_REQUEST }, status= status.HTTP_400_BAD_REQUEST)
 
         except Exception as e:
-            return Response({'success': False, 'message': f"Ocurrió un error al crear el curso: {e}", 'status' : status.HTTP_400_BAD_REQUEST }, status= status.HTTP_400_BAD_REQUEST)
+            return Response({'success': False, 'message': f'Ocurrió un error al crear el curso: {e}', 'status' : status.HTTP_400_BAD_REQUEST }, status= status.HTTP_400_BAD_REQUEST)

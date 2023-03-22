@@ -1,10 +1,10 @@
 from rest_framework import views,pagination,status
 from rest_framework.response import Response
-from core.models import User
-from core.serializers import UserSerializer,LearningStyleSerializer,RoleSerializer
+from users.models import User
+from core.serializers import UserSerializer
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
-from core import models
+from users.models import User
 
 
 class UserView(views.APIView,pagination.PageNumberPagination):

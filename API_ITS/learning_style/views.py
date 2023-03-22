@@ -1,7 +1,7 @@
 from rest_framework import views,pagination,status
 from rest_framework.response import Response
 from core.serializers import LearningStyleSerializer
-from core.models import LearningStyle
+from learning_style.models import LearningStyle
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
 

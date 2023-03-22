@@ -1,31 +1,42 @@
 
-
 from rest_framework import serializers
-from core import models
+from roles.models import Role
+from learning_style.models import LearningStyle
+from  types_test.models import TypeTest
+from levels_test.models import LevelTest
+from tests.models import Test
+from answers.models import Answer,User_Answer
+from courses.models import Course
+from sections.models import Section
+from lessons.models import Lesson
+from modules.models import Module
+from operations.models import Operation
+from resource.models import Resource
+from users.models import User
 
 
 class RoleSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model= models.Role
+        model= Role
         fields= ['id','name']
 
 class LearningStyleSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model= models.LearningStyle
+        model= LearningStyle
         fields= ['id','name']
 
 class TypeTestSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model= models.TypeTest
+        model= TypeTest
         fields= ['id','name']
 
 class LevelTestSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model= models.LevelTest
+        model= LevelTest
         fields= ['id','name']
 
 class CourseSerializer(serializers.ModelSerializer):
@@ -33,7 +44,7 @@ class CourseSerializer(serializers.ModelSerializer):
     image = serializers.ImageField(required = False)
     # previous = 'self'
     class Meta:
-        model= models.Course
+        model= Course
         fields = ['id','title','description','is_enabled','previous','image','reference','is_active']
 
 class TestSerializer(serializers.ModelSerializer):
@@ -42,7 +53,7 @@ class TestSerializer(serializers.ModelSerializer):
     level_id = serializers.IntegerField(write_only = True)
     type_id = serializers.IntegerField(write_only = True)
     class Meta:
-        model= models.Test
+        model= Test
         fields = ['id','content','level','type','is_active','is_enabled','image','level_id','type_id','image']
         depth = 1
 
@@ -53,7 +64,7 @@ class SectionSerializer(serializers.ModelSerializer):
     course_id = serializers.IntegerField(write_only = True)
     test = TestSerializer()
     class Meta:
-        model= models.Section
+        model= Section
         fields = ['id','title','is_enabled','previous','course','test','is_active','test_id','course_id']
         depth = 1
 
@@ -65,7 +76,7 @@ class LessonSerializerLevel1(serializers.ModelSerializer):
     section = SectionSerializer(read_only = True)
     
     class Meta:
-        model = models.Lesson
+        model = Lesson
         fields = ['id','title','content','is_enabled','is_active','image','previous','section','section_id','previous_id','resource_id','resource']
 class LessonSerializer(serializers.ModelSerializer):
     # CAMPOS DE SOLO ESCRITURA
@@ -76,13 +87,13 @@ class LessonSerializer(serializers.ModelSerializer):
     previous = LessonSerializerLevel1(read_only = True)
     
     class Meta:
-        model = models.Lesson
+        model = Lesson
         fields = ['id','title','content','is_enabled','is_active','image','previous','section','section_id','previous_id','resource_id','resource']
 
 class ResourceSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = models.Resource
+        model = Resource
         fields = ['id','model_3d','text']
 
 
@@ -101,7 +112,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
     class Meta:
-        model= models.User
+        model= User
         fields = ['id','first_name','last_name','email','password','confirm_password','role','learning_style','is_superuser','is_enabled','learning_style_id','role_id']
         depth = 1
         extra_kwargs = {
@@ -136,10 +147,10 @@ class UserSerializer(serializers.ModelSerializer):
 
 
         # OBTENER LOS OBJETOS DE ROL Y EL ESTILO DE APRENDIZAJE
-        learning_style =  models.LearningStyle.objects.get(id = validated_data["learning_style_id"])
-        role =  models.Role.objects.get(id = validated_data["role_id"])
+        learning_style =  LearningStyle.objects.get(id = validated_data["learning_style_id"])
+        role =  Role.objects.get(id = validated_data["role_id"])
           
-        return models.User.objects.create_user(
+        return User.objects.create_user(
             email = validated_data["email"],
             first_name = validated_data["first_name"],
             last_name = validated_data["last_name"],
@@ -155,7 +166,7 @@ class AnswerSerializer(serializers.ModelSerializer):
     # CAMPOS DE SOLO ESCRITURA
     test_id = serializers.IntegerField(write_only = True)
     class Meta:
-        model = models.Answer
+        model = Answer
         fields = ['id','description','is_correct','is_enabled','test','test_id']
         depth = 1
 
@@ -169,8 +180,15 @@ class AnswerUserSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField(write_only=True)
     answer_id = serializers.IntegerField(write_only=True)
     class Meta:
-        model = models.User_Answer
+        model = User_Answer
         fields = ['id','user','date_answer','answer','user_id','answer_id']
         depth = 1
+
+
+# class ProgressUserSerializer():
+
+#     class Meta:
+#         model = ProgressUser
+#         fields = ['percentage','sections_completed','sections_missing']
 
 
