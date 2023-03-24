@@ -42,7 +42,7 @@ class LevelTestSerializer(serializers.ModelSerializer):
 class CourseSerializer(serializers.ModelSerializer):
 
     image = serializers.ImageField(required = False)
-    # previous = 'self'
+
     class Meta:
         model= Course
         fields = ['id','title','description','is_enabled','previous','image','reference','is_active']
@@ -66,7 +66,6 @@ class SectionSerializer(serializers.ModelSerializer):
     class Meta:
         model= Section
         fields = ['id','title','is_enabled','previous','course','test','is_active','test_id','course_id']
-        depth = 1
 
 class LessonSerializerLevel1(serializers.ModelSerializer):
     # CAMPOS DE SOLO ESCRITURA

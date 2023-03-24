@@ -35,7 +35,7 @@ class CourseView(APIView,PageNumberPagination):
             # OBTENER LAS RESPUESTAS DEL USUARIO
             user_answers = User_Answer.objects.filter(user_id= user_id) 
             
-
+            counter_previous = 0
             for course in serializer.data:
                 
                 # CONVERTIR EL OBJETO CURSO A DICCIONARIO PARA PODER MODIFICARLO
@@ -47,6 +47,7 @@ class CourseView(APIView,PageNumberPagination):
                 # OBTENER LAS RESPUESTAS CORRECTAS POR USUARIO EN CADA UNA DE LAS SECCIONES DEL CURSO
                 answer_correcy_by_user = [answer for answer in answers_correct if any( section.test_id == answer.test_id for section in sections_by_course) and any(answer_user.answer_id == answer.id for answer_user in user_answers) ]
 
+                
                 courses_with_progress.append({
                     #  'id':  course_dict.get('id') ,
                     # 'title': course_dict.get('title'),
@@ -57,12 +58,16 @@ class CourseView(APIView,PageNumberPagination):
                     # 'reference': 'bb7bec80-246f-4731-b4ae-dcb1cf1f490e',
                     # 'is_active': true
                     **course_dict,
+                    'previous': None if counter_previous == 0 else courses_with_progress[counter_previous -1],
                     'progress_user':{
                         'percentage': round( len( (100*answer_correcy_by_user) ) /  len(sections_by_course) ) ,
                         'sections_completed' : len(answer_correcy_by_user),
-                        'sections_missing': len(sections_by_course) - len(answer_correcy_by_user)
+                        'sections_missing': len(sections_by_course) - len(answer_correcy_by_user),
+                        'total_sections': len(sections_by_course)
                     }
                 })
+
+                counter_previous = counter_previous + 1
 
 
             return Response({'success': True , 'count': len(courses_ordered)  , 'data': courses_with_progress, 'next':self.get_next_link() , 'previous':self.get_previous_link() , 'status:' : status.HTTP_200_OK }, status= status.HTTP_200_OK  )
