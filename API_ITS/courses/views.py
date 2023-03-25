@@ -4,6 +4,7 @@ from rest_framework import status
 from courses.models import Course
 from answers.models import Answer,User_Answer
 from users.models import User
+from tests.models import Test
 from sections.models import Section
 from core.serializers import CourseSerializer
 from rest_framework.permissions import IsAuthenticated
@@ -45,7 +46,8 @@ class CourseView(APIView,PageNumberPagination):
                 sections_by_course = Section.objects.filter(course_id = course_dict.get('id'))
 
                 # OBTENER LAS RESPUESTAS CORRECTAS POR USUARIO EN CADA UNA DE LAS SECCIONES DEL CURSO
-                answer_correcy_by_user = [answer for answer in answers_correct if any( section.test_id == answer.test_id for section in sections_by_course) and any(answer_user.answer_id == answer.id for answer_user in user_answers) ]
+                # answer_correcy_by_user = [answer for answer in answers_correct if any( section.test_id == answer.test_id for section in sections_by_course) and any(answer_user.answer_id == answer.id for answer_user in user_answers) ]
+                answer_correcy_by_user = [answer for answer in answers_correct if any( test.id == answer.test_id for test in Test.objects.all()  if any( section.id == test.section_id for section in sections_by_course ) )  and any(answer_user.answer_id == answer.id for answer_user in user_answers) ]
 
                 
                 courses_with_progress.append({

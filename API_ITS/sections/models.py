@@ -1,6 +1,6 @@
 from django.db import models
 import uuid
-from tests.models import Test
+# from tests.models import Test
 from courses.models import Course
 
 class Section(models.Model):
@@ -15,7 +15,7 @@ class Section(models.Model):
     previous = models.ForeignKey('self', on_delete= models.DO_NOTHING, null= True)
     created_date = models.DateTimeField(auto_now=True)
     updated_date = models.DateTimeField(auto_now=True)
-    test = models.ForeignKey(Test, on_delete=models.CASCADE)
+    # test = models.ForeignKey(Test, on_delete=models.CASCADE)
 
     @classmethod
     def get_ordered_sections(cls):

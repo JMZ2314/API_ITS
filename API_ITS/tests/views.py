@@ -18,12 +18,12 @@ class TestView(APIView,PageNumberPagination):
     def get (self,request):
         try:
          
-            test_id = request.query_params.get('id')
+            section_id = request.query_params.get('section_id')
 
-            filter_by_id = test_id is not None
+            filter_by_section = section_id is not None
 
-            if (filter_by_id):
-                tests = [Test.objects.get(id = test_id),]
+            if (section_id):
+                tests = [Test.objects.get(section_id = section_id, level_id = 1),]
             else:
                 tests = Test.objects.all()
        
@@ -31,7 +31,7 @@ class TestView(APIView,PageNumberPagination):
             paginated_data = self.paginate_queryset(tests,request)
             serializer = self.serializer_class( paginated_data, many = True)
 
-            return Response({'success': True , 'count': 0 if filter_by_id else tests.count() , 'data': serializer.data[0]  if filter_by_id else serializer.data , 'next':self.get_next_link() , 'previous':self.get_previous_link() , 'status:' : status.HTTP_200_OK }, status= status.HTTP_200_OK  )
+            return Response({'success': True , 'count': 0 if filter_by_section else tests.count() , 'data': serializer.data[0]  if filter_by_section else serializer.data , 'next':self.get_next_link() , 'previous':self.get_previous_link() , 'status:' : status.HTTP_200_OK }, status= status.HTTP_200_OK  )
         except Exception as e:
             return Response({'success': False, 'message': f"{e}", 'status' : status.HTTP_400_BAD_REQUEST } , status= status.HTTP_400_BAD_REQUEST)
         

@@ -1,8 +1,9 @@
 from django.db import models
 import uuid
-# from lessons.models import Lesson
 from levels_test.models import LevelTest
 from types_test.models import TypeTest
+from sections.models import Section
+from lessons.models import Lesson   
 
 def test_image_path(instance,filename):
     return 'images/test/{0}/{1}'.format(instance.reference,filename)
@@ -20,4 +21,5 @@ class Test(models.Model):
     level  = models.ForeignKey( LevelTest, on_delete= models.CASCADE)
     type = models.ForeignKey( TypeTest, on_delete= models.CASCADE)
     image = models.ImageField( upload_to=test_image_path, blank=True, null=True )
-    # review_lesson = models.ForeignKey(Lesson, on_delete= models.SET_NULL,blank= True,null=True)
+    section  = models.ForeignKey(Section,blank=True,null=True,on_delete=models.SET_NULL)
+    review_lesson = models.ForeignKey(Lesson, blank=True, null= True,on_delete=models.SET_NULL)
