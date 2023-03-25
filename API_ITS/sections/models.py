@@ -18,11 +18,11 @@ class Section(models.Model):
     # test = models.ForeignKey(Test, on_delete=models.CASCADE)
 
     @classmethod
-    def get_ordered_sections(cls):
+    def get_ordered_sections(cls,course_id):
 
         try:
             # OBTENER TODAS LAS SECCIONES DEL CURSO SELECCIONADO
-            sections = cls.objects.all()
+            sections = cls.objects.filter(course_id = course_id)
 
             # ORDENAR LAS SECCIONES DE FORMA SUCESIVA
             sections_ordered = []

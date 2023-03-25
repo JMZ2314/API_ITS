@@ -13,7 +13,7 @@ from modules.models import Module
 from operations.models import Operation
 from resource.models import Resource
 from users.models import User
-
+from suggestions.models import Suggestions
 
 class RoleSerializer(serializers.ModelSerializer):
 
@@ -182,10 +182,15 @@ class AnswerUserSerializer(serializers.ModelSerializer):
         depth = 1
 
 
-# class ProgressUserSerializer():
+class SuggestionsSerializer(serializers.ModelSerializer):
 
-#     class Meta:
-#         model = ProgressUser
-#         fields = ['percentage','sections_completed','sections_missing']
+    user_id = serializers.IntegerField(write_only = True)
+    course_id = serializers.IntegerField(write_only = True)
+    user = UserSerializer()
+    course = CourseSerializer()
 
+    class Meta:
+        model = Suggestions
+        fields = ['id','user','course','date','user_id','course_id','content']
+         
 

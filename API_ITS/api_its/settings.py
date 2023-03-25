@@ -44,7 +44,8 @@ LOCAL_APPS = [
     'roles',
     'sections',
     'tests',
-    'types_test'
+    'types_test',
+    'suggestions'
 ]
 
 

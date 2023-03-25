@@ -20,20 +20,19 @@ class LessonView(APIView,PageNumberPagination):
 
              # OBTENER LOS QUERY PARAMS
             section_id = request.query_params.get('section')
-            
-            if(section_id is None):
-                return Response({'success': False, 'message': 'Debe seleccionar la sección a la que pertenecen las lecciones', 'status' : status.HTTP_400_BAD_REQUEST } , status= status.HTTP_400_BAD_REQUEST)
 
+            filter_by_section = section_id is not None 
 
+            if(filter_by_section):
+                lessons_ordered   = Lesson.get_ordered_lessons(section=section_id)
+                paginated_data = self.paginate_queryset(lessons_ordered,request)            
+                serializer = self.serializer_class( paginated_data, many = True)
+            else:
+                lessons = Lesson.objects.all()
+                paginated_data = self.paginate_queryset(lessons,request)            
+                serializer = self.serializer_class( paginated_data, many = True)
 
-            lessons_ordered   = Lesson.get_ordered_lessons(section=section_id)
-
-            paginated_data = self.paginate_queryset(lessons_ordered,request)            
-        
-        
-            serializer = self.serializer_class( paginated_data, many = True)
-
-            return Response({'success': True , 'count': len(lessons_ordered) , 'data': serializer.data, 'next':self.get_next_link() , 'previous':self.get_previous_link() , 'status:' : status.HTTP_200_OK }, status= status.HTTP_200_OK  )
+            return Response({'success': True , 'count': len(lessons_ordered) if filter_by_section else lessons.count() , 'data': serializer.data, 'next':self.get_next_link() , 'previous':self.get_previous_link() , 'status:' : status.HTTP_200_OK }, status= status.HTTP_200_OK  )
         except Exception as e:
             return Response({'success': False, 'message': f"{e}", 'status' : status.HTTP_400_BAD_REQUEST } , status= status.HTTP_400_BAD_REQUEST)
     

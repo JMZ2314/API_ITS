@@ -12,6 +12,7 @@ from modules.models import Module
 from operations.models import Operation
 from resource.models import Resource
 from users.models import User
+from suggestions.models import Suggestions
 
 
 
@@ -25,4 +26,5 @@ admin.site.register(Section)
 admin.site.register(Lesson)
 admin.site.register(Test)
 admin.site.register(Answer)
+admin.site.register(Suggestions)
 
