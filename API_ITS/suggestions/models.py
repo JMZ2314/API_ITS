@@ -10,8 +10,7 @@ class Suggestions(models.Model):
     class Meta:
         db_table = 'suggestions'
 
-    content = models.TextField()
-    content = models.TextField()
+    content = models.TextField(blank=False)
     user = models.ForeignKey(User,on_delete=models.SET_NULL,blank= True,null=True)
     course = models.ForeignKey(Course, on_delete=models.SET_NULL, blank= True, null= True)
     attended = models.BooleanField(default= False, null= False, blank= False)

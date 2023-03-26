@@ -186,11 +186,20 @@ class SuggestionsSerializer(serializers.ModelSerializer):
 
     user_id = serializers.IntegerField(write_only = True)
     course_id = serializers.IntegerField(write_only = True)
-    user = UserSerializer()
-    course = CourseSerializer()
+    user = UserSerializer(read_only = True)
+    course = CourseSerializer(read_only= True)
+
+
+    def validate_course_id(self,value):
+        if value == -1:
+            raise serializers.ValidationError("Debe seleccionar un curso para la sugerencia")
+        return value
 
     class Meta:
         model = Suggestions
         fields = ['id','user','course','date','user_id','course_id','content']
+        extra_kwargs = {
+            'content': {'error_messages': {'blank': 'El contenido de la sugerencia no puede estar en blanco'} },
+        }
          
 

@@ -14,6 +14,7 @@ from Auth.views import AuthView,LogOutView
 from resource.views import ResourceView
 from rest_framework_simplejwt.views import TokenRefreshView
 from progress.views import ProgressView
+from suggestions.views import SuggestionView
 
 urlpatterns = [
     path('users', UserView.as_view()),
@@ -32,5 +33,6 @@ urlpatterns = [
     path('logout', LogOutView.as_view()),
     path('signin', RegisterView.as_view()),
     path('refresh', TokenRefreshView.as_view()),
-    path('progress', ProgressView.as_view())
+    path('progress', ProgressView.as_view()),
+    path('suggestions', SuggestionView.as_view()),
 ]
