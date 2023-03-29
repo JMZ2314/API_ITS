@@ -83,7 +83,6 @@ class SectionView(APIView,PageNumberPagination):
     def post(self, request):
         
         try:
-
             serializer = self.serializer_class(data=request.data)
 
             if(serializer.is_valid()):

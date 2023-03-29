@@ -9,12 +9,12 @@ from answers.views import AnswerView
 from levels_test.views import LevelTestView
 from learning_style.views import LearningStyleView
 from answer_user.views import AnswerUserView
-from courses.views import CourseView
+from courses.views import CourseView,CourseViewDetail
 from Auth.views import AuthView,LogOutView
 from resource.views import ResourceView
 from rest_framework_simplejwt.views import TokenRefreshView
 from progress.views import ProgressView
-from suggestions.views import SuggestionView
+from suggestions.views import SuggestionView,SuggestionViewDetail
 
 urlpatterns = [
     path('users', UserView.as_view()),
@@ -35,4 +35,7 @@ urlpatterns = [
     path('refresh', TokenRefreshView.as_view()),
     path('progress', ProgressView.as_view()),
     path('suggestions', SuggestionView.as_view()),
+    path('suggestions/<int:pk>', SuggestionViewDetail.as_view()),
+    path('suggestions/<int:pk>', SuggestionViewDetail.as_view()),
+    path('courses/<int:pk>', CourseViewDetail.as_view()),
 ]

@@ -9,10 +9,10 @@ class Section(models.Model):
         db_table = 'section' 
     
     title = models.CharField(max_length=50)
-    course = models.ForeignKey(Course, on_delete= models.CASCADE)
+    course = models.ForeignKey(Course, on_delete= models.CASCADE,blank=True,null=True)
     is_enabled = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
-    previous = models.ForeignKey('self', on_delete= models.DO_NOTHING, null= True)
+    previous = models.ForeignKey('self', on_delete= models.DO_NOTHING, null= True, blank=True)
     created_date = models.DateTimeField(auto_now=True)
     updated_date = models.DateTimeField(auto_now=True)
     # test = models.ForeignKey(Test, on_delete=models.CASCADE)
@@ -30,12 +30,13 @@ class Section(models.Model):
             first_section = sections.get(previous = None)
             sections_ordered.append(first_section)
             # ordenar las demás secciones
-            for item in sections_ordered:
-                next_course = sections.get( previous = item.id )
-                sections_ordered.append(next_course)
-                if(len(sections_ordered) == len(sections)):
 
-                    break
+            if(len(sections) > 1):
+                for item in sections_ordered:
+                    next_course = sections.get( previous = item.id )
+                    sections_ordered.append(next_course)
+                    if(len(sections_ordered) == len(sections)):
+                        break
             return sections_ordered
         except Exception as e:
             return []

@@ -11,7 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.parsers import MultiPartParser, FormParser,JSONParser
 from rest_framework_simplejwt.authentication import JWTAuthentication
-
+from sections.models import Section
 
 class CourseView(APIView,PageNumberPagination):
 
@@ -51,8 +51,13 @@ class CourseView(APIView,PageNumberPagination):
                     # OBTENER LAS SECCIONES DEL CURSO
                     sections_by_course = Section.objects.filter(course_id = course_dict.get('id'))
 
+                    quantity_section_by_courses = len(sections_by_course)
+
+                    # SI NO HAY SECCIONES POR CURSO, SALTAR CURSO PARA EVITAR EXCEPCIÓN EN LOS CALCULOS
+                    if(quantity_section_by_courses == 0):
+                        continue
+
                     # OBTENER LAS RESPUESTAS CORRECTAS POR USUARIO EN CADA UNA DE LAS SECCIONES DEL CURSO
-                    # answer_correcy_by_user = [answer for answer in answers_correct if any( section.test_id == answer.test_id for section in sections_by_course) and any(answer_user.answer_id == answer.id for answer_user in user_answers) ]
                     answer_correcy_by_user = [answer for answer in answers_correct if any( test.id == answer.test_id for test in Test.objects.all()  if any( section.id == test.section_id for section in sections_by_course ) )  and any(answer_user.answer_id == answer.id for answer_user in user_answers) ]
 
                     
@@ -76,6 +81,7 @@ class CourseView(APIView,PageNumberPagination):
                     })
 
                     counter_previous = counter_previous + 1
+                
              
                     
 
@@ -87,14 +93,31 @@ class CourseView(APIView,PageNumberPagination):
     def post(self, request):
         
         try:
-
             serializer = self.serializer_class(data=request.data)
-
             if(serializer.is_valid()):
-                course_created =   self.serializer_class(serializer.save()).data
+                course_created = self.serializer_class(serializer.save()).data
                 return Response({'success': True, 'message': 'El curso fue creado exitosamente', 'data': course_created , 'status' : status.HTTP_200_OK }, status= status.HTTP_200_OK)
             else:
                 return Response({'success': False, 'messages':  serializer.errors , 'status' : status.HTTP_400_BAD_REQUEST }, status= status.HTTP_400_BAD_REQUEST)
 
         except Exception as e:
             return Response({'success': False, 'message': f'Ocurrió un error al crear el curso: {e}', 'status' : status.HTTP_400_BAD_REQUEST }, status= status.HTTP_400_BAD_REQUEST)
+
+class CourseViewDetail(APIView):
+
+    serializer_class = CourseSerializer
+    parser_classes = [JSONParser,FormParser,MultiPartParser]
+    # authentication_classes = [JWTAuthentication]
+    # permission_classes = [IsAuthenticated,] 
+
+    def put(self,request,pk,format= None):
+
+        try:
+            course = Course.objects.get(id = pk)
+            serializer = self.serializer_class(course, data=request.data)
+            if serializer.is_valid():
+                course_updated = self.serializer_class(serializer.save()).data
+                return Response({'success': True, 'message': "El curso fue actualizado exitosamente", 'data': course_updated , 'status' : status.HTTP_200_OK }, status= status.HTTP_200_OK)
+
+        except Exception as e:
+                return Response({'success': False, 'message': f"Ocurrió un error al actualizar el curso: {e}", 'status' : status.HTTP_400_BAD_REQUEST }, status= status.HTTP_400_BAD_REQUEST)

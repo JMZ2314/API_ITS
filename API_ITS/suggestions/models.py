@@ -15,3 +15,4 @@ class Suggestions(models.Model):
     course = models.ForeignKey(Course, on_delete=models.SET_NULL, blank= True, null= True)
     attended = models.BooleanField(default= False, null= False, blank= False)
     date = models.DateTimeField(auto_now=True)
+    is_enabled = models.BooleanField(default=True,blank=False,null=False)

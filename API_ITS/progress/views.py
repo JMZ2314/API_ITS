@@ -39,6 +39,13 @@ class ProgressView(APIView):
                 # OBTENER LAS SECCIONES DEL CURSO
                 sections_by_course = Section.objects.filter(course_id = course.id)
 
+                
+                # SI NO HAY SECCIONES POR CURSO, SALTAR CURSO PARA EVITAR EXCEPCIÓN EN LOS CALCULOS
+                quantity_sections_by_course = len(sections_by_course)
+
+                if(quantity_sections_by_course == 0):
+                    continue
+
                 # OBTENER LAS RESPUESTAS CORRECTAS POR USUARIO EN CADA UNA DE LAS SECCIONES DEL CURSO
                 answer_correcy_by_user = [answer for answer in answers_correct if any( test.id == answer.test_id for test in Test.objects.all()  if any( section.id == test.section_id for section in sections_by_course ) )  and any(answer_user.answer_id == answer.id for answer_user in user_answers) ]
 

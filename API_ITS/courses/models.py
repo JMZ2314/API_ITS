@@ -17,13 +17,13 @@ class Course(models.Model):
     is_active = models.BooleanField(default=True)
     users = models.ManyToManyField(User, through='user_course')
     previous = models.ForeignKey('self', on_delete= models.DO_NOTHING, blank=True ,null= True)
-    image = models.ImageField(upload_to= course_image_path,blank=True,null=True)
+    image = models.ImageField(upload_to= course_image_path,blank=True,null=True,default=None)
 
     @classmethod
     def get_ordered_courses(cls):
 
         try:
-            # OBTENER TODOS LOS CURSOS
+            # # OBTENER TODOS LOS CURSOS
             courses = cls.objects.all()
 
             # ORDENAR LOS CURSOS DE FORMA SUCESIVA
